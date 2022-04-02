@@ -20,6 +20,7 @@ from numpy import savez_compressed
 from google.cloud import storage
 import firebase_admin
 from firebase_admin import credentials
+#from firebase_admin import firestore
 from firebase_admin import db
 
 cred = credentials.Certificate(r"C:\Users\harid\Desktop\serviceaccountkey.json")
@@ -28,9 +29,13 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://missing-person-finder-8e324-default-rtdb.firebaseio.com/'
 })
 
+#firebase_admin.initialize_app(cred)
+
+#db = firestore.client()
+
 ref = db.reference('server/')
 users_ref = ref.child('missing data')
-
+#doc_ref = db.collection(u'missing_persons')
 
 FACE_DETECTOR_PATH = "{base_path}/cascades/haarcascade_frontalface_default.xml".format(
 	base_path=os.path.abspath(os.path.dirname(__file__)))
@@ -150,19 +155,23 @@ class PostView(APIView):
                 'lastname': lastname,
                 'encoding': embedded_data
             }
-        })
+        }) 
         ref = db.reference('server/missing data')
-
-        print(ref.get())
-
-
-
-
+        stored_data = ref.get()
+        missing_persons = list(i for i in stored_data.keys())
+        #print(type(asarray(missing_persons)))
+        #print(stored_data[[i for i in stored_data.keys()]]['encoding'])
+        encodings = list()
+        for j in missing_persons:
+            encodings.append(stored_data[j]['encoding'])
+        encodings = asarray(encodings)
+        trainy = asarray(missing_persons)
+        savez_compressed('face-embeddings.npz', encodings, trainy)
         print("Done............................................................")
         
         posts_serializer = RegisterSerializer(data=datas)
         #posts_serializer = RegisterSerializer(data=request.data)
-        #print(posts_serializer)
+        print(posts_serializer)
         if posts_serializer.is_valid():
             posts_serializer.save()
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
