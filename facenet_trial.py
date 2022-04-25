@@ -7,10 +7,8 @@ from matplotlib import pyplot
 from numpy import savez_compressed
 from numpy import asarray
 from mtcnn.mtcnn import MTCNN
-from numpy import load
 from numpy import expand_dims
 from tensorflow.keras.models import load_model
-from numpy import load
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import Normalizer
@@ -80,12 +78,13 @@ def load_dataset(directory):
 	return asarray(X), asarray(y)
 
 # load train dataset
-trainX, trainy = load_dataset('5-celebrity-faces-dataset/train/')
-print(trainX.shape, trainy.shape)
+#trainX, trainy = load_dataset('5-celebrity-faces-dataset/train/')
+#print(trainX.shape, trainy.shape)
+#print(trainy)
 # load test dataset
-testX, boom = load_dataset('5-celebrity-faces-dataset/val/')
+#testX, boom = load_dataset('5-celebrity-faces-dataset/val/')
 # save arrays to one file in compressed format
-savez_compressed('5-celebrity-faces-dataset.npz', trainX, trainy, testX) 
+#savez_compressed('5-celebrity-faces-dataset.npz', trainX, trainy, testX) 
 
 
 # calculate a face embedding for each face in the dataset using facenet
@@ -112,6 +111,7 @@ print('Loaded Model')
 # convert each face in the train set to an embedding
 newTrainX = list()
 for face_pixels in trainX:
+	#print(face_pixels)
 	embedding = get_embedding(model, face_pixels)
 	newTrainX.append(embedding)
 newTrainX = asarray(newTrainX)
@@ -123,6 +123,7 @@ for face_pixels in testX:
 	newTestX.append(embedding)
 newTestX = asarray(newTestX)
 print(newTestX.shape)
+#print(trainy)
 # save arrays to one file in compressed format
 #newTrainX and newTestX contains embeddings and trainy and testy contains labels.
 savez_compressed('5-celebrity-faces-embeddings.npz', newTrainX, trainy, newTestX)
@@ -156,7 +157,6 @@ score_train = accuracy_score(trainy, yhat_train)
 # summarize
 #print('Accuracy: train=%.3f, test=%.3f' % (score_train*100))
 
-
 # develop a classifier for the 5 Celebrity Faces Dataset
 
 # load faces
@@ -170,6 +170,7 @@ in_encoder = Normalizer(norm='l2')
 trainX = in_encoder.transform(trainX)
 testX = in_encoder.transform(testX)
 # label encode targets
+
 out_encoder = LabelEncoder()
 out_encoder.fit(trainy)
 trainy = out_encoder.transform(trainy)
@@ -185,8 +186,10 @@ model.fit(trainX, trainy)
 selection = choice([i for i in range(testX.shape[0])])
 random_face_pixels = testX_faces[selection]
 random_face_emb = testX[selection]
+print(random_face_emb.shape)
 # prediction for the face
 samples = expand_dims(random_face_emb, axis=0)
+print(samples.shape)
 yhat_class = model.predict(samples)
 yhat_prob = model.predict_proba(samples)
 # get name
