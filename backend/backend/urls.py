@@ -19,5 +19,6 @@ from core.views import front,PostView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',front,name="front"),
-     path('register/', PostView.as_view(), name= 'posts_list'),
+    path('register/', PostView.as_view(), name= 'posts_list'),
+    
 ]

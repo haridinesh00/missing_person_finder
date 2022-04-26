@@ -115,12 +115,14 @@ class PostView(APIView):
         #encoded_string = base64.b64encode(image.read())
         #print(image)
 
-        cred = credentials.Certificate(r"C:\Users\harid\Desktop\serviceaccountkey.json")
+        #cred = credentials.Certificate(r"C:\Users\harid\Desktop\serviceaccountkey.json")
         #firebase_admin.initialize_app(cred)
         
 
         firstname=datas['firstname']
         lastname=datas['lastname']
+        country = datas['country']
+        description = datas['description']
         print(firstname)
         print(lastname)
         #print(datas)
@@ -173,6 +175,8 @@ class PostView(APIView):
             firstname+lastname :{
                 'firstname': firstname,
                 'lastname': lastname,
+                'country': country,
+                'description': description, 
                 'encoding': embedded_data
             }
         }) 
@@ -247,37 +251,17 @@ class PostView(APIView):
         yhat_class = model.predict(newTrainX1)
         predict_names = out_encoder.inverse_transform(yhat_class)
         print(predict_names[0])
-        db.reference('Image').delete()
+        refnew = db.reference('server/missing data').get()
+        #print(refnew[predict_names[0]])
+        Country = refnew[predict_names[0]]['country']
+        Description = refnew[predict_names[0]]['description']
+        Firstname = refnew[predict_names[0]]['firstname']
+        Lastname = refnew[predict_names[0]]['lastname']
+
         #.............................................................................................................................................
-
-
-        '''
-        new_X = list()
-        new_X.extend(new_image)
-        testXX = asarray(new_X)
-        savez_compressed('test-faces-dataset.npz', testXX)
-
-        new_data = load('test-faces-dataset.npz')
-        testXX = new_data['arr_0']
-        #print(testX)
-        newTestX = list()
-        new_embedding = get_embedding(model, testXX)
-        newTestX.append(new_embedding)
-        newTestX = asarray(newTestX)
-        savez_compressed('new-faces-embeddings.npz', newTestX)
-        new_data = load('new-faces-embeddings.npz')
-        testXX = new_data['arr_0']
         
-        testX = in_encoder.transform(testXX)
-        samples = expand_dims(testX, axis=0)
-        print(samples.shape)
-        yhat_class = model.predict(samples)
-        #print(yhat_class)
-        predict_names = out_encoder.inverse_transform(yhat_class)
-        print(predict_names)
-        '''
-        
-        
+        #db.reference('Image').delete()
+
         print("Done............................................................")
         
         posts_serializer = RegisterSerializer(data=datas)
@@ -289,3 +273,4 @@ class PostView(APIView):
         else:
             print('error', posts_serializer.errors)
             return Response(posts_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

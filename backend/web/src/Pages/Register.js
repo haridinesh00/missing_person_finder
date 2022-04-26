@@ -19,6 +19,8 @@ function Register() {
         form_data.append('firstname',fname);
         form_data.append('lastname',Lname);
         form_data.append('image', file);
+        form_data.append('country', Country);
+        form_data.append('description', des);
             axios.post('register/', form_data, {
             headers: {
                 'content-type': 'multipart/form-data'
