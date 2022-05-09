@@ -2,19 +2,34 @@ import React, { useState } from 'react';
 import './Register.css';
 import axios from 'axios'
 import {RegionDropdown} from 'react-country-region-selector';
+import firebaseApp from '../Firebase';
 function Register() {
     const [fname,SetFname]=useState('');
     const [Lname,SetLname]=useState('');
     const [Country,SetCountry]=useState('');
     const [des,SetDes]=useState('');
     const [file,setFile] = useState(null)
+    
     const imagehandle =(e)=>{
         const datas = e.currentTarget.files[0]
         setFile(datas)
     }
     const handleSubmit= e =>{
         e.preventDefault()
-        console.log(file)
+        firebaseApp.storage().ref(`images/${file.name}`).put(file).then(({ref})=>{
+            ref.getDownloadURL().then(urls=>{
+                console.log(urls)
+                firebaseApp.firestore().collection('users').add({
+                    'firstname':fname,
+                    'lastname':Lname,
+                    'des':des,
+                    'url':urls
+                }).then(()=>{
+                    console.log("done....")
+                })
+            })
+        })
+
         let form_data = new FormData();
         form_data.append('firstname',fname);
         form_data.append('lastname',Lname);
@@ -82,6 +97,8 @@ function Register() {
             <input type="submit" value="Submit"/>
             </div>
         </form>
+
+        
     </div>
         );
     

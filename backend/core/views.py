@@ -1,3 +1,4 @@
+from django import http
 from django.shortcuts import render
 from importlib_resources import read_binary
 from rest_framework.views import    APIView
@@ -32,20 +33,11 @@ from sklearn.svm import SVC
 
 cred = credentials.Certificate(r"C:\Users\harid\Desktop\serviceaccountkey.json")
 
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://missing-person-finder-8e324-default-rtdb.firebaseio.com/'
-})
-
-#firebase_admin.initialize_app(cred)
-
-#db = firestore.client()
-
-ref = db.reference('server/')
-users_ref = ref.child('missing data')
-#doc_ref = db.collection(u'missing_persons')
+firebase_admin.initialize_app(cred,{"databaseURL": "https://missing-person-finder-8e324-default-rtdb.firebaseio.com/"})
 
 FACE_DETECTOR_PATH = "{base_path}/cascades/haarcascade_frontalface_default.xml".format(
 	base_path=os.path.abspath(os.path.dirname(__file__)))
+
 
 def extract_face(filename, required_size=(160, 160)):
 	# load image from file
@@ -101,6 +93,93 @@ def front(request):
     context={ }
     return render(request,"index.html",context)
 
+
+def match(request):
+    ref = db.reference('server/missing data')
+    stored_data = ref.get()
+    missing_persons = list(i for i in stored_data.keys())
+    print(missing_persons)
+    
+    #print(type(asarray(missing_persons)))
+    #print(stored_data[[i for i in stored_data.keys()]]['encoding'])
+    encodings = list()
+    for j in missing_persons:
+        encodings.append(stored_data[j]['encoding'][0])
+    encodings = asarray(encodings)
+    print(encodings.shape)
+    trainy = asarray(missing_persons)
+    print(trainy.shape)
+    savez_compressed('pikachu-faces-embeddings.npz', encodings, trainy)
+
+    #perfected.................................................................................................................................
+
+    data_pik = load('pikachu-faces-embeddings.npz')
+    trainX, trainy = data_pik['arr_0'], data_pik['arr_1']
+    in_encoder = Normalizer(norm='l2')
+    trainX = in_encoder.transform(trainX)
+    out_encoder = LabelEncoder()
+    out_encoder.fit(trainy)
+    trainy = out_encoder.transform(trainy)
+
+    model = SVC(kernel='linear', probability=True)
+    model.fit(trainX, trainy)
+
+    #################################################################################################################################################
+    
+    new_ref = db.reference('Image').get()
+    #new_stored_data = new_ref.get()
+    Image_data = list(i for i in new_ref.keys())
+    imagearray = list()
+
+    for k in Image_data:
+        imagearray.append(new_ref[k]['imageUrl'])
+    
+
+    #savez_compressed('face-embeddings.npz', encodings, trainy)
+
+    print(imagearray[0])
+    #im = Image.open(requests.get(imagearray[0], stream=True).raw) 
+    urllib.request.urlretrieve(imagearray[0], "gfg.jpg")
+    #face1 = extract_face("gfg.jpg")
+    #img = Image.open("gfg.jpg")
+    #img.show()
+
+    #............................................................................................................................................
+    face1 = extract_face("gfg.jpg")
+    X1 = list()
+    X1.extend(face1)
+    trainX1 = asarray(X1)
+    trainX1 = expand_dims(trainX1, axis=0)
+    #print(trainy.shape)
+    savez_compressed('pikachu-faces-dataset1.npz', trainX1)
+    model1 = load_model('facenet_keras.h5')
+    newTrainX1 = list()
+    for face_pixels1 in trainX1:
+        #print(face_pixels1)
+        embedding1 = get_embedding(model1, face_pixels1)
+        newTrainX1.append(embedding1)
+    newTrainX1 = asarray(newTrainX1)
+    print(newTrainX1.shape)
+    yhat_class = model.predict(newTrainX1)
+    predict_names = out_encoder.inverse_transform(yhat_class)
+    print(predict_names[0])
+    refnew = db.reference('server/missing data').get()
+    #print(refnew[predict_names[0]])
+    cases= {
+    "Country" : refnew[predict_names[0]]['country'],
+    "Description" : refnew[predict_names[0]]['description'],
+    "Firstname" : refnew[predict_names[0]]['firstname'],
+    "Lastname" : refnew[predict_names[0]]['lastname']
+    }
+    print("\nPredicted Details...........................................................................................................")
+    print("First Name : {}".format(cases['Firstname']))
+    print("Last Name : {}".format(cases['Lastname']))
+    print("Region : {}".format(cases['Country']))
+    print("Description : {}".format(cases['Description']))
+    print("............................................................................................................................")
+    return render(request, "index.html",cases)
+
+
 class PostView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -112,13 +191,11 @@ class PostView(APIView):
     def post(self, request, *args, **kwargs):
         datas=request.data
         image=datas['image']
-        #encoded_string = base64.b64encode(image.read())
-        #print(image)
-
-        #cred = credentials.Certificate(r"C:\Users\harid\Desktop\serviceaccountkey.json")
-        #firebase_admin.initialize_app(cred)
+        ref = db.reference('server/')
+        users_ref = ref.child('missing data')
+        #strurl = upload_to_firebasestorage(image)
         
-
+        
         firstname=datas['firstname']
         lastname=datas['lastname']
         country = datas['country']
@@ -177,86 +254,14 @@ class PostView(APIView):
                 'lastname': lastname,
                 'country': country,
                 'description': description, 
-                'encoding': embedded_data
+                'encoding': embedded_data,
             }
         }) 
         #............................................................................................
         
         
-        ref = db.reference('server/missing data')
-        stored_data = ref.get()
-        missing_persons = list(i for i in stored_data.keys())
-        print(missing_persons)
-        
-        #print(type(asarray(missing_persons)))
-        #print(stored_data[[i for i in stored_data.keys()]]['encoding'])
-        encodings = list()
-        for j in missing_persons:
-            encodings.append(stored_data[j]['encoding'][0])
-        encodings = asarray(encodings)
-        print(encodings.shape)
-        trainy = asarray(missing_persons)
-        print(trainy.shape)
-        savez_compressed('pikachu-faces-embeddings.npz', encodings, trainy)
-
-        #perfected.................................................................................................................................
-
-        data_pik = load('pikachu-faces-embeddings.npz')
-        trainX, trainy = data_pik['arr_0'], data_pik['arr_1']
-        in_encoder = Normalizer(norm='l2')
-        trainX = in_encoder.transform(trainX)
-        out_encoder = LabelEncoder()
-        out_encoder.fit(trainy)
-        trainy = out_encoder.transform(trainy)
-
-        model = SVC(kernel='linear', probability=True)
-        model.fit(trainX, trainy)
-
-        #################################################################################################################################################
-        
-        new_ref = db.reference('Image').get()
-        #new_stored_data = new_ref.get()
-        Image_data = list(i for i in new_ref.keys())
-        imagearray = list()
-
-        for k in Image_data:
-            imagearray.append(new_ref[k]['imageUrl'])
         
 
-        #savez_compressed('face-embeddings.npz', encodings, trainy)
-
-        print(imagearray[0])
-        #im = Image.open(requests.get(imagearray[0], stream=True).raw) 
-        urllib.request.urlretrieve(imagearray[0], "gfg.jpg")
-        #face1 = extract_face("gfg.jpg")
-        #img = Image.open("gfg.jpg")
-        #img.show()
-
-        #............................................................................................................................................
-        face1 = extract_face("gfg.jpg")
-        X1 = list()
-        X1.extend(face1)
-        trainX1 = asarray(X1)
-        trainX1 = expand_dims(trainX1, axis=0)
-        #print(trainy.shape)
-        savez_compressed('pikachu-faces-dataset1.npz', trainX1)
-        model1 = load_model('facenet_keras.h5')
-        newTrainX1 = list()
-        for face_pixels1 in trainX1:
-            #print(face_pixels1)
-            embedding1 = get_embedding(model1, face_pixels1)
-            newTrainX1.append(embedding1)
-        newTrainX1 = asarray(newTrainX1)
-        print(newTrainX1.shape)
-        yhat_class = model.predict(newTrainX1)
-        predict_names = out_encoder.inverse_transform(yhat_class)
-        print(predict_names[0])
-        refnew = db.reference('server/missing data').get()
-        #print(refnew[predict_names[0]])
-        Country = refnew[predict_names[0]]['country']
-        Description = refnew[predict_names[0]]['description']
-        Firstname = refnew[predict_names[0]]['firstname']
-        Lastname = refnew[predict_names[0]]['lastname']
 
         #.............................................................................................................................................
         
