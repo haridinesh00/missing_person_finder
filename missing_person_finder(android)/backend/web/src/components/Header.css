@@ -1,0 +1,68 @@
+.rectangle-1 {
+    align-items: center;
+    display: flex;
+    height: 442px;
+    justify-content: flex-end;
+    min-width: 1440px;
+    padding: 34px 66px;
+  }
+  
+  .ellipse-1 {
+    height: 281px;
+    margin-top: 7px;
+    object-fit: cover;
+    width: 312px;
+    border-radius: 50%;
+  }
+  
+  .flex-col {
+    align-items: flex-start;
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    margin-left: 139px;
+    min-height: 309px;
+    width: 784px;
+  }
+  
+  .title {
+    color: var(--black);
+    font-family: var(--font-family-fira_code);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    letter-spacing: 0;
+    min-height: 62px;
+    width: 784px;
+  }
+  
+  .age {
+    color: var(--black);
+    font-family: var(--font-family-fira_code);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    letter-spacing: 0;
+    min-height: 73px;
+    width: 324px;
+  }
+  
+  .overlap-group {
+    height: 151px;
+    position: relative;
+    width: 347px;
+  }
+  
+  .reporting-time-and-date {
+    left: 0;
+    letter-spacing: 0;
+    position: absolute;
+    top: 0;
+    width: 347px;
+  }
+  
+  .last-seen {
+    left: 0;
+    letter-spacing: 0;
+    position: absolute;
+    top: 52px;
+    width: 307px;
+  }

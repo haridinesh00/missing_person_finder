@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "998844085131",
+    "firebase_url": "https://missing-person-finder-8e324-default-rtdb.firebaseio.com",
+    "project_id": "missing-person-finder-8e324",
+    "storage_bucket": "missing-person-finder-8e324.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998844085131:android:26ddb9673e112028e1758e",
+        "android_client_info": {
+          "package_name": "com.example.firebasestorage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998844085131-1ijv5377pg2ufqbbfg3kgr14lt33nseg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR_YXP6HECrfpP5k8TxXsSfzCsc4UHfPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998844085131-1ijv5377pg2ufqbbfg3kgr14lt33nseg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

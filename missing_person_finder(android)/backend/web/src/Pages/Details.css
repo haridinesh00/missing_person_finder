@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css?family=Fira+Code:400,700");
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.desktop-1 {
+  align-items: flex-start;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  height: 1024px;
+  position: relative;
+  width: 1440px;
+}
+
+.overlap-group1 {
+  align-items: flex-start;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  margin-top: 3px;
+  min-height: 579px;
+  padding: 43px 40px;
+  width: 1440px;
+}
+
+.description {
+  letter-spacing: 0;
+  margin-left: 124px;
+  min-height: 66px;
+  width: 396px;
+}
+
+.add-content {
+  align-self: flex-end;
+  letter-spacing: 0;
+  margin-top: 4px;
+  min-height: 352px;
+  width: 1176px;
+}

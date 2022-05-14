@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:layout_margin="20dp"
+    android:elevation="10dp">
+
+    <ImageView
+        android:id="@+id/m_image"
+        android:layout_width="143dp"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="60dp"
+        android:layout_height="37dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Name:"
+        android:fontFamily="sans-serif-black"
+        android:textColor="#1B0101"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="198dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="100dp"
+        android:text="Description"
+        android:fontFamily="sans-serif-black"
+        android:textColor="#1B0202"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/firstname"
+        android:layout_width="130dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="10dp"
+        android:text="TextView"
+        android:textColor="#130101" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="214dp"
+        android:layout_height="106dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginRight="5dp"
+        android:padding="5dp"
+        android:text="TextView"
+        android:textColor="#150101" />
+
+    <TextView
+        android:id="@+id/lastname"
+        android:layout_width="130dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="40dp"
+        android:text="TextView"
+        android:textColor="#130101" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="10dp"
+        android:text="Region:"
+        android:fontFamily="sans-serif-black"
+        android:textColor="#1B0101"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/country"
+        android:layout_width="130dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="72dp"
+        android:text="TextView"
+        android:textColor="#130101" />
+
+</androidx.cardview.widget.CardView>
